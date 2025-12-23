@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getApiUrl } from '@/lib/config';
 import {
   Table,
   TableBody,
@@ -33,7 +34,7 @@ export const PaymentHistory = () => {
   const fetchPayments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/payments', {
+      const response = await fetch(getApiUrl('/api/payments'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },

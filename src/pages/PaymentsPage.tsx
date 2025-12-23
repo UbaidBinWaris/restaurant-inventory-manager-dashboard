@@ -2,7 +2,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import SavedPaymentMethods from '@/components/payments/SavedPaymentMethods';
 import { AddPaymentMethodDialog } from '@/components/payments/AddPaymentMethodDialog';
 import QuickPayment from '@/components/payments/QuickPayment';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Plus, Zap } from 'lucide-react';
 import { useState } from 'react';

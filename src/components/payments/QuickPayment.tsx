@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { getStripe } from '@/lib/stripe';
+import { getApiUrl } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -100,7 +101,7 @@ const QuickPaymentForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const fetchSavedCards = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/payment-methods', {
+      const response = await fetch(getApiUrl('/api/payment-methods'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -137,7 +138,7 @@ const QuickPaymentForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       const token = localStorage.getItem('token');
       
       // Create payment intent
-      const response = await fetch('http://localhost:5000/api/payments/create-intent', {
+      const response = await fetch(getApiUrl('/api/payments/create-intent'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

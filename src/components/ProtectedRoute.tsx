@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
-  const { user, loading, isAdmin, isAuthenticated } = useAuth();
+  const { loading, isAdmin, isAuthenticated } = useAuth();
 
   if (loading) {
     return (

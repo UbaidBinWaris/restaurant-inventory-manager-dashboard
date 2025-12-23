@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { getApiUrl } from '@/lib/config';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,7 +42,7 @@ export const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
   const fetchPaymentMethods = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/payment-methods', {
+      const response = await fetch(getApiUrl('/api/payment-methods'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -69,7 +70,7 @@ export const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
   const handleSetDefault = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payment-methods/${id}/set-default`, {
+      const response = await fetch(getApiUrl(`/api/payment-methods/${id}/set-default`), {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,7 +97,7 @@ export const SavedPaymentMethods: React.FC<SavedPaymentMethodsProps> = ({
     setIsDeleting(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/payment-methods/${deleteId}`, {
+      const response = await fetch(getApiUrl(`/api/payment-methods/${deleteId}`), {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

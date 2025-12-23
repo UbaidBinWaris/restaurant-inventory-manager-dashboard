@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { getStripe } from '@/lib/stripe';
+import { getApiUrl } from '@/lib/config';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -74,7 +75,7 @@ export const PaymentCheckout: React.FC<PaymentCheckoutProps> = ({
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/payments/create-intent', {
+      const response = await fetch(getApiUrl('/api/payments/create-intent'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

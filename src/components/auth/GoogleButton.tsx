@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
+import { getApiUrl } from '@/lib/config';
 
 const GoogleButton = () => {
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = getApiUrl('/api/auth/google');
   };
 
   return (

@@ -24,10 +24,26 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const PORT = process.env.PORT;
 const JWT_SECRET = process.env.JWT_SECRET;
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.JWT_SECRET; // Fallback for backward compatibility
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:8080';
 
 // Middleware - CORS configuration
+// Parse allowed origins from environment variable
+const allowedOrigins = (process.env.CORS_ORIGIN && process.env.CORS_ORIGIN.length > 0)
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
+  : ['http://localhost:8080', 'http://localhost:3000'];
+
 const corsOptions = {
-  origin: true, // In development, allow all origins
+  origin: function (origin, callback) {
+    // Allow requests with no origin (e.g., mobile apps, curl, same-origin)
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -40,7 +56,7 @@ app.use(cookieParser());
 
 // Session middleware (required for Passport)
 app.use(session({
-  secret: JWT_SECRET,
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { 
@@ -138,14 +154,6 @@ const authenticateToken = (req, res, next) => {
   } catch (error) {
     res.status(403).json({ success: false, error: 'Invalid or expired token.' });
   }
-};
-
-// Middleware to check if user is admin
-const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ success: false, error: 'Access denied. Admin privileges required.' });
-  }
-  next();
 };
 
 // ============================================================================
@@ -293,7 +301,7 @@ app.get('/api/auth/google',
 );
 
 app.get('/api/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: 'http://localhost:8080/login' }),
+  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
   async (req, res) => {
     try {
       // Generate JWT token for the user
@@ -310,17 +318,12 @@ app.get('/api/auth/google/callback',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
       });
 
-      // Redirect to frontend with token in URL (so frontend can store it)
-      res.redirect(`http://localhost:8080/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
-        id: req.user.id,
-        email: req.user.email,
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        role: req.user.role
-      }))}`);
+      // Redirect to frontend without sensitive data in URL
+      // Frontend will fetch user data via authenticated API call
+      res.redirect(`${FRONTEND_URL}/auth/callback`);
     } catch (error) {
       console.error('OAuth callback error:', error);
-      res.redirect('http://localhost:8080/login?error=oauth_failed');
+      res.redirect(`${FRONTEND_URL}/login?error=oauth_failed`);
     }
   }
 );
