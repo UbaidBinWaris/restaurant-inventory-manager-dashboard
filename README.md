@@ -70,14 +70,56 @@ This repo includes an Express + PostgreSQL backend and JWT authentication.
 
 ### 2) Configure environment variables
 
-Create a `.env` file in the repo root (see [docs/DATABASE_SETUP.md](docs/DATABASE_SETUP.md) for the full template). Minimum values:
+Create a `.env` file in the repo root. You can copy `.env.example` as a starting point:
+
+```bash
+cp .env.example .env
+```
+
+Then update the values in `.env` with your configuration:
 
 ```env
+# Database Configuration
 DATABASE_URL=postgresql://<user>:<password>@localhost:5432/<db>
+
+# Server Configuration
 PORT=5000
-CORS_ORIGIN=http://localhost:8080
+NODE_ENV=development
+
+# CORS Configuration (comma-separated list of allowed origins)
+CORS_ORIGIN=http://localhost:8080,http://localhost:3000
+
+# Frontend URL (used for OAuth redirects)
+FRONTEND_URL=http://localhost:8080
+
+# Authentication Secrets (IMPORTANT: Use different secrets for production)
 JWT_SECRET=change_me_in_production
+SESSION_SECRET=different_secret_for_session
+
+# Google OAuth Configuration (optional, for Google Sign-In)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+
+# Stripe Configuration (optional, for payment processing)
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
 ```
+
+**Frontend environment variables** (optional, create `.env` or `.env.local` in the root):
+
+```env
+# API URL (defaults to http://localhost:5000 if not set)
+VITE_API_URL=http://localhost:5000
+
+# Frontend URL (defaults to http://localhost:8080 if not set)
+VITE_FRONTEND_URL=http://localhost:8080
+```
+
+**Security Notes:**
+- Use different values for `JWT_SECRET` and `SESSION_SECRET` in production
+- Never commit your `.env` file to version control
+- Use strong, random secrets in production (minimum 32 characters)
 
 ### 3) Run frontend + backend together
 
